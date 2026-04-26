@@ -1,17 +1,18 @@
-import libsql
-import redis
 import os
+
+import psycopg
+import redis
+
+import db
 
 
 def init_db():
-    url = os.getenv("TURSO_DATABASE_URL")
-    auth_token = os.getenv("TURSO_AUTH_TOKEN")
+    url = os.getenv("DB_URL")
 
-    if not url or not auth_token:
-        raise Exception("Missing TURSO_DATABASE_URL or TURSO_AUTH_TOKEN")
+    if not url:
+        raise Exception("Missing DB_URL")
 
-    conn = libsql.connect("hello.db", sync_url=url, auth_token=auth_token)
-    conn.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER);")
+    conn = psycopg.connect(url)
 
     return conn
 

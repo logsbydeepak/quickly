@@ -1,9 +1,12 @@
 import config
+import spider
 
 
 def main():
     config.init_db()
-    config.init_redis()
+    spider.spider("https://pypi.org/project/beautifulsoup4/")
+
+    # config.init_redis()
 
 
 if __name__ == "__main__":

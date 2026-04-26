@@ -5,6 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "beautifulsoup4>=4.14.3",
     "libsql>=0.1.11",
+    "psycopg[binary]>=3.3.3",
     "redis>=7.4.0",
+    "requests>=2.33.1",
 ]
