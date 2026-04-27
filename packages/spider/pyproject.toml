@@ -8,6 +8,7 @@ dependencies = [
     "beautifulsoup4>=4.14.3",
     "libsql>=0.1.11",
     "nanoid>=2.0.0",
+    "nltk>=3.9.4",
     "psycopg[binary]>=3.3.3",
     "redis>=7.4.0",
     "requests>=2.33.1",

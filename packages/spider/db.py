@@ -33,10 +33,10 @@ CREATE TABLE IF NOT EXISTS word_index (
     FOREIGN KEY (page_id) REFERENCES page(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_page_link_to_url ON page_link(to_url);
-CREATE INDEX idx_page_created_at ON page(created_at);
-CREATE INDEX idx_word_index_word ON word_index(word);
-CREATE INDEX idx_word_index_page_id ON word_index(page_id);
+CREATE INDEX IF NOT EXISTS idx_page_link_to_url ON page_link(to_url);
+CREATE INDEX IF NOT EXISTS idx_page_created_at ON page(created_at);
+CREATE INDEX IF NOT EXISTS idx_word_index_word ON word_index(word);
+CREATE INDEX IF NOT EXISTS idx_word_index_page_id ON word_index(page_id);
 """
 
 
