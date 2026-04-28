@@ -7,6 +7,7 @@ members = [
     "api",
     "quickly",
     "spider",
+    "tkz",
 ]
 
 [[package]]
@@ -15,10 +16,14 @@ version = "0.1.0"
 source = { virtual = "apps/api" }
 dependencies = [
     { name = "flask" },
+    { name = "tkz" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "flask", specifier = ">=3.1.3" }]
+requires-dist = [
+    { name = "flask", specifier = ">=3.1.3" },
+    { name = "tkz", editable = "packages/tkz" },
+]
 
 [[package]]
 name = "beautifulsoup4"
@@ -501,6 +506,7 @@ dependencies = [
     { name = "psycopg", extra = ["binary"] },
     { name = "redis" },
     { name = "requests" },
+    { name = "tkz" },
 ]
 
 [package.metadata]
@@ -512,7 +518,19 @@ requires-dist = [
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.3" },
     { name = "redis", specifier = ">=7.4.0" },
     { name = "requests", specifier = ">=2.33.1" },
+    { name = "tkz", editable = "packages/tkz" },
 ]
+
+[[package]]
+name = "tkz"
+version = "0.1.0"
+source = { editable = "packages/tkz" }
+dependencies = [
+    { name = "nltk" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "nltk", specifier = ">=3.9.4" }]
 
 [[package]]
 name = "tqdm"

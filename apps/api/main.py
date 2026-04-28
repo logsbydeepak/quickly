@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import tkz
 
 app = Flask(__name__)
 
@@ -9,5 +10,7 @@ def hello_world():
     query = request.args.get("q", "")
     if not query:
         return jsonify(result)
+
+    words = tkz.tokenize(query)
 
     return result
