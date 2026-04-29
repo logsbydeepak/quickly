@@ -1,12 +1,19 @@
 import re
+from pathlib import Path
 
 import nltk
 from nltk.corpus import stopwords
 
 
-nltk.download("stopwords", quiet=True)
+NLTK_DATA_DIR = Path("/tmp/nltk_data")
+NLTK_DATA_DIR.mkdir(parents=True, exist_ok=True)
+nltk.data.path.append(str(NLTK_DATA_DIR))
 
-STOP_WORDS = set(stopwords.words("english"))
+try:
+    STOP_WORDS = set(stopwords.words("english"))
+except LookupError:
+    nltk.download("stopwords", download_dir=str(NLTK_DATA_DIR), quiet=True)
+    STOP_WORDS = set(stopwords.words("english"))
 
 
 def tokenize(text):
