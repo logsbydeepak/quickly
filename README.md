@@ -2,6 +2,8 @@
 
 Quickly is a small search engine workspace. It crawls pages, stores page metadata and links, builds a token index, exposes search results through a Flask API, and renders a fast Astro web UI.
 
+![Quickly search UI screenshot](screenshot.png)
+
 ## Workspace
 
 ```text
