@@ -1,7 +1,15 @@
 <script is:inline>
   (() => {
-    const saved = localStorage.getItem("quickly-theme");
-    const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    document.documentElement.classList.toggle("dark", (saved || preferred) === "dark");
+    try {
+      const saved = localStorage.getItem("quickly-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+      const theme = saved || preferred;
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      document.documentElement.style.colorScheme = theme;
+    } catch {
+      document.documentElement.style.colorScheme = "light dark";
+    }
   })();
 </script>

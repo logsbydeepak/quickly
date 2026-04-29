@@ -34,6 +34,57 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+[data-theme-toggle] {
+  position: relative;
+}
+
+[data-theme-toggle] [data-theme-moon],
+[data-theme-toggle] [data-theme-sun] {
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+[data-theme-toggle] [data-theme-sun] {
+  margin-left: -21px;
+}
+
+html:not(.dark) [data-theme-sun],
+.dark [data-theme-moon] {
+  opacity: 0;
+  transform: rotate(-60deg) scale(0.7);
+}
+
+html:not(.dark) [data-theme-moon],
+.dark [data-theme-sun] {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+[data-theme-label] {
+  display: grid;
+  min-width: 29px;
+}
+
+[data-theme-label] > span {
+  grid-area: 1 / 1;
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+
+html:not(.dark) [data-theme-dark-label],
+.dark [data-theme-light-label] {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+html:not(.dark) [data-theme-light-label],
+.dark [data-theme-dark-label] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 ::selection {
   background: var(--accent-soft);
 }

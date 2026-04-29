@@ -19,15 +19,9 @@ const API_URL = window.QUICKLY_API_URL || "http://localhost:5000";
 function applyTheme(theme) {
   document.documentElement.classList.toggle("dark", theme === "dark");
   localStorage.setItem(STORAGE_KEY, theme);
-  document.querySelectorAll("[data-theme-label]").forEach((label) => {
-    label.textContent = theme === "light" ? "Dark" : "Light";
+  document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+    button.setAttribute("aria-label", `Switch to ${theme === "light" ? "dark" : "light"} theme`);
   });
-  document
-    .querySelectorAll("[data-theme-moon]")
-    .forEach((icon) => icon.classList.toggle("hidden", theme !== "light"));
-  document
-    .querySelectorAll("[data-theme-sun]")
-    .forEach((icon) => icon.classList.toggle("hidden", theme === "light"));
 }
 
 function initTheme() {
