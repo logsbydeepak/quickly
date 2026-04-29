@@ -15,6 +15,3 @@ members = [
   "packages/db",
 ]
 
-[project.scripts]
-app = "apps.api.main:app"
-
