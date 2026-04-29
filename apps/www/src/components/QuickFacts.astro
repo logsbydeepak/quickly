@@ -1,0 +1,19 @@
+---
+interface Props {
+  speedSeconds: string;
+  totalResults: number;
+}
+
+const { speedSeconds, totalResults } = Astro.props;
+---
+
+<aside class="hidden w-[272px] shrink-0 flex-col gap-4 pt-1 md:flex">
+  <div class="animate-fade-in d400 rounded-2xl border-[1.5px] border-black/[0.09] bg-white/70 p-5 shadow-sm backdrop-blur-sm dark:border-white/[0.08] dark:bg-[#1e1c18]/70">
+    <h4 class="mb-3 text-[11px] font-semibold uppercase tracking-widest text-[#8a837a] dark:text-[#6e6760]">Quick Facts</h4>
+    <div class="flex flex-col gap-2.5">
+      <div class="flex items-center justify-between"><span class="text-[12px] text-[#8a837a] dark:text-[#6e6760]">Search speed</span><span data-speed class="font-sora text-[13px] font-semibold text-[var(--accent)]">{speedSeconds}s</span></div>
+      <div class="flex items-center justify-between"><span class="text-[12px] text-[#8a837a] dark:text-[#6e6760]">Results found</span><span data-found class="font-sora text-[13px] font-semibold text-[var(--accent)]">{totalResults.toLocaleString()}</span></div>
+      <div class="flex items-center justify-between"><span class="text-[12px] text-[#8a837a] dark:text-[#6e6760]">Index date</span><span class="font-sora text-[13px] font-semibold text-[var(--accent)]">Apr 27, 2026</span></div>
+    </div>
+  </div>
+</aside>

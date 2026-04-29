@@ -1,0 +1,40 @@
+---
+interface PaginationData {
+  page?: number;
+  total_pages?: number;
+  has_next?: boolean;
+  has_previous?: boolean;
+}
+
+interface Props {
+  query: string;
+  pagination: PaginationData;
+  currentPage: number;
+  totalPages: number;
+}
+
+const { query, pagination, currentPage, totalPages } = Astro.props;
+
+const targetFor = (item: string, pageNumber = 1) => {
+  const params = new URLSearchParams({ q: item.trim() });
+  if (pageNumber > 1) params.set("page", String(pageNumber));
+  return `/search?${params.toString()}`;
+};
+
+const paginationStart = Math.max(1, currentPage - 3);
+const paginationEnd = Math.min(totalPages, paginationStart + 6);
+const paginationPages = Array.from(
+  { length: Math.max(0, paginationEnd - paginationStart + 1) },
+  (_, index) => paginationStart + index,
+);
+---
+
+<div data-pagination class="mt-10 flex flex-wrap items-center justify-center gap-1.5">
+  {totalPages > 1 && (
+    <>
+      {pagination.has_previous ? <a href={targetFor(query, currentPage - 1)} class="rounded-lg border-[1.5px] border-black/[0.09] px-4 py-2 font-dm text-[13px] text-[#4a4540] transition-colors duration-150 hover:border-black/20 dark:border-white/[0.08] dark:text-[#b8b0a5] dark:hover:border-white/20">Prev</a> : <span class="rounded-lg border-[1.5px] border-black/[0.09] px-4 py-2 font-dm text-[13px] text-[#4a4540] opacity-35 dark:border-white/[0.08] dark:text-[#b8b0a5]">Prev</span>}
+      {paginationPages.map((pageNumber) => pageNumber === currentPage ? <span class="flex h-9 w-9 items-center justify-center rounded-lg border-[1.5px] border-[var(--accent)] bg-[var(--accent)] font-dm text-[13px] font-semibold text-white">{pageNumber}</span> : <a href={targetFor(query, pageNumber)} class="flex h-9 w-9 items-center justify-center rounded-lg border-[1.5px] border-black/[0.09] font-dm text-[13px] text-[#4a4540] transition-all duration-150 hover:border-black/20 dark:border-white/[0.08] dark:text-[#b8b0a5] dark:hover:border-white/20">{pageNumber}</a>)}
+      {pagination.has_next ? <a href={targetFor(query, currentPage + 1)} class="rounded-lg border-[1.5px] border-black/[0.09] px-4 py-2 font-dm text-[13px] text-[#4a4540] transition-colors duration-150 hover:border-black/20 dark:border-white/[0.08] dark:text-[#b8b0a5] dark:hover:border-white/20">Next</a> : <span class="rounded-lg border-[1.5px] border-black/[0.09] px-4 py-2 font-dm text-[13px] text-[#4a4540] opacity-35 dark:border-white/[0.08] dark:text-[#b8b0a5]">Next</span>}
+    </>
+  )}
+</div>

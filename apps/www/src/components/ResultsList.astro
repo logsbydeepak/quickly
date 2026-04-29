@@ -1,0 +1,26 @@
+---
+import ResultItem from "./ResultItem.astro";
+
+interface Result {
+  url?: string;
+  title?: string;
+  description?: string;
+}
+
+interface Props {
+  results: Result[];
+  searchError: boolean;
+}
+
+const { results, searchError } = Astro.props;
+---
+
+<div data-results-list>
+  {searchError ? (
+    <div class="rounded-xl border-[1.5px] border-red-500/30 bg-white/70 p-5 font-dm text-[13.5px] text-[#4a4540] backdrop-blur-sm dark:bg-[#1e1c18]/70 dark:text-[#b8b0a5]">Could not load results from the API.</div>
+  ) : results.length ? (
+    results.map((item, index) => <ResultItem item={item} index={index} />)
+  ) : (
+    <div class="rounded-xl border-[1.5px] border-black/[0.09] bg-white/70 p-5 font-dm text-[13.5px] text-[#4a4540] backdrop-blur-sm dark:border-white/[0.08] dark:bg-[#1e1c18]/70 dark:text-[#b8b0a5]">No results found.</div>
+  )}
+</div>

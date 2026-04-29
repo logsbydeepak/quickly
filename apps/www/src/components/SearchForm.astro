@@ -1,0 +1,100 @@
+---
+interface Props {
+  query?: string;
+  compact?: boolean;
+  showActions?: boolean;
+  autofocus?: boolean;
+}
+
+const { query = "", compact = false, showActions = false, autofocus = false } = Astro.props;
+const shellHeight = compact ? "h-11 rounded-[22px] px-4" : "h-14 rounded-[28px] px-5";
+const inputSize = compact ? "text-sm" : "text-[17px]";
+const submitSize = compact ? "h-7 w-7" : "h-9 w-9";
+const iconSize = compact ? 13 : 16;
+const searchIconSize = compact ? 16 : 20;
+const suggestionsRadius = compact ? "rounded-b-[16px]" : "rounded-b-[20px]";
+---
+
+<form data-search-form class={compact ? "max-w-[600px] flex-1" : "w-full max-w-[600px] animate-fade-up delay-1"}>
+  <div data-search-shell class="relative w-full">
+    <div class={`flex ${shellHeight} items-center gap-2.5 border-[1.5px] border-black/[0.09] bg-white/70 shadow-sm backdrop-blur-md transition-all duration-150 focus-within:border-[var(--accent)] focus-within:shadow-[0_0_0_3px_var(--accent-glow),0_4px_16px_rgba(0,0,0,0.08)] dark:border-white/[0.08] dark:bg-[#1e1c18]/85`}>
+      <svg width={searchIconSize} height={searchIconSize} viewBox="0 0 20 20" fill="none" class="shrink-0 opacity-40"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      <input data-search-input autofocus={autofocus} type="text" value={query} placeholder="Search the web, fast." class={`flex-1 border-none bg-transparent font-dm ${inputSize} text-[#141210] caret-[var(--accent)] outline-none placeholder:text-[#8a837a] dark:text-[#f0ede8] dark:placeholder:text-[#6e6760]`} />
+      <button data-clear-search type="button" class={`${query ? "" : "hidden"} rounded-full p-1 text-[#8a837a] transition-colors duration-150 hover:text-[#141210] dark:hover:text-[#f0ede8]`}><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button>
+      <div class="h-5 w-px shrink-0 bg-black/10 dark:bg-white/10"></div>
+      <button type="submit" class={`flex ${submitSize} shrink-0 items-center justify-center rounded-full bg-[var(--accent)] transition-all duration-100 hover:opacity-85 active:scale-95`}><svg width={iconSize} height={iconSize} viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="white" stroke-width="1.8"></circle><path d="M10.5 10.5L14 14" stroke="white" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+    </div>
+    <div data-suggestions class={`absolute left-0 right-0 top-full z-50 hidden overflow-hidden ${suggestionsRadius} border-[1.5px] border-t border-[var(--accent)] border-t-black/5 bg-white/95 shadow-lg backdrop-blur-md dark:border-t-white/5 dark:bg-[#1e1c18]/97`}></div>
+  </div>
+
+  {showActions && (
+    <div class="mt-5 flex justify-center gap-2.5">
+      <button type="submit" class="rounded-lg border-[1.5px] border-black/[0.09] bg-white/70 px-5 py-2.5 font-dm text-[13px] font-medium text-[#4a4540] backdrop-blur-sm transition-all duration-150 hover:border-black/20 hover:text-[#141210] dark:border-white/[0.08] dark:bg-[#1e1c18]/70 dark:text-[#b8b0a5] dark:hover:border-white/20 dark:hover:text-[#f0ede8]">Quickly Search</button>
+      <button data-random-search type="button" class="rounded-lg border-[1.5px] border-black/[0.09] bg-white/70 px-5 py-2.5 font-dm text-[13px] font-medium text-[#4a4540] backdrop-blur-sm transition-all duration-150 hover:border-black/20 hover:text-[#141210] dark:border-white/[0.08] dark:bg-[#1e1c18]/70 dark:text-[#b8b0a5] dark:hover:border-white/20 dark:hover:text-[#f0ede8]">Feeling Fast</button>
+    </div>
+  )}
+</form>
+
+<script>
+  import { generate } from "random-words";
+
+  const CHIPS = ["Trending", "News", "Sports", "Finance", "Technology", "Science"];
+
+  function targetFor(query: string) {
+    const params = new URLSearchParams({ q: query.trim() });
+    return `/search?${params.toString()}`;
+  }
+
+  function randomWord() {
+    const word = generate();
+    if (typeof word === "string" && word.trim()) return word.trim();
+    return CHIPS[Math.floor(Math.random() * CHIPS.length)];
+  }
+
+  function hideSuggestions(form: HTMLFormElement) {
+    const list = form.querySelector<HTMLElement>("[data-suggestions]");
+    if (!list) return;
+    list.innerHTML = "";
+    list.classList.add("hidden");
+    form.querySelector("[data-search-shell]")?.classList.remove("is-open");
+  }
+
+  function initSearchBars() {
+    document.querySelectorAll<HTMLFormElement>("[data-search-form]").forEach((form) => {
+      if (form.dataset.searchReady) return;
+
+      const input = form.querySelector<HTMLInputElement>("[data-search-input]");
+      const clear = form.querySelector<HTMLButtonElement>("[data-clear-search]");
+      if (!input) return;
+
+      form.dataset.searchReady = "true";
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (input.value.trim()) window.location.href = targetFor(input.value);
+      });
+      input.addEventListener("input", () => {
+        clear?.classList.toggle("hidden", !input.value);
+        hideSuggestions(form);
+      });
+      input.addEventListener("focus", () => hideSuggestions(form));
+      input.addEventListener("blur", () => hideSuggestions(form));
+      clear?.addEventListener("click", () => {
+        input.value = "";
+        clear.classList.add("hidden");
+        hideSuggestions(form);
+        input.focus();
+      });
+    });
+
+    document.querySelectorAll<HTMLButtonElement>("[data-random-search]").forEach((button) => {
+      if (button.dataset.randomReady) return;
+      button.dataset.randomReady = "true";
+      button.addEventListener("click", () => {
+        window.location.href = targetFor(randomWord());
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initSearchBars);
+</script>

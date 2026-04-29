@@ -1,0 +1,11 @@
+---
+interface Props {
+  chips: string[];
+}
+
+const { chips } = Astro.props;
+---
+
+<div class="mt-8 flex animate-fade-up delay-2 flex-wrap justify-center gap-2">
+  {chips.map((chip) => <a href={`/search?q=${encodeURIComponent(chip)}`} class="rounded-full border-[1.5px] border-black/[0.09] px-3.5 py-1.5 font-dm text-xs font-medium text-[#8a837a] transition-all duration-150 hover:border-[var(--accent)] hover:text-[var(--accent)] dark:border-white/[0.08] dark:text-[#6e6760]">{chip}</a>)}
+</div>

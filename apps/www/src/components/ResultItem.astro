@@ -1,0 +1,45 @@
+---
+interface Result {
+  url?: string;
+  title?: string;
+  description?: string;
+}
+
+interface Props {
+  item: Result;
+  index: number;
+}
+
+const { item, index } = Astro.props;
+const url = item.url || "";
+const featured = index === 0;
+
+const displayUrl = (value: string) => {
+  try {
+    const parsed = new URL(value);
+    return `${parsed.hostname}${parsed.pathname === "/" ? "" : parsed.pathname}`;
+  } catch {
+    return value || "";
+  }
+};
+
+const resultDomain = (value: string) => {
+  try {
+    return new URL(value).hostname;
+  } catch {
+    return (value || "").split("/")[0];
+  }
+};
+---
+
+<article class={`group animate-result-slide r${index} transition-all duration-150 ${featured ? "mb-1 rounded-xl border-[1.5px] border-black/[0.09] bg-white/70 p-5 shadow-sm backdrop-blur-sm hover:border-[var(--accent)] hover:bg-[var(--accent-soft)] dark:border-white/[0.08] dark:bg-[#1e1c18]/70" : "border-b border-black/[0.07] py-3.5 dark:border-white/[0.06]"}`}>
+  <a href={url} class="block" target="_blank" rel="noreferrer">
+    <div class="mb-1.5 flex flex-wrap items-center gap-2">
+      <img src={`https://www.google.com/s2/favicons?domain=${resultDomain(url)}&sz=32`} width="15" height="15" class="shrink-0 rounded-[3px]" alt="" />
+      <span class="max-w-[320px] truncate text-[13px] font-light text-[#8a837a] dark:text-[#6e6760]">{displayUrl(url)}</span>
+      {featured && <span class="shrink-0 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-[var(--accent)]">Top pick</span>}
+    </div>
+    <h3 class="mb-1.5 font-dm text-[17px] font-medium leading-snug text-[oklch(0.48_0.18_245)] transition-colors duration-150 group-hover:text-[var(--accent)] group-hover:underline group-hover:underline-offset-2 dark:text-[oklch(0.70_0.16_245)]">{item.title || url || "Untitled result"}</h3>
+    <p class="max-w-[680px] text-[13.5px] font-light leading-relaxed text-[#4a4540] dark:text-[#b8b0a5]">{item.description || ""}</p>
+  </a>
+</article>

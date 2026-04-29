@@ -1,0 +1,19 @@
+---
+interface Props {
+  items: string[];
+}
+
+const { items } = Astro.props;
+
+const targetFor = (item: string) => {
+  const params = new URLSearchParams({ q: item.trim() });
+  return `/search?${params.toString()}`;
+};
+---
+
+<div class="mt-8 border-t border-black/[0.07] pt-5 dark:border-white/[0.06]">
+  <h4 class="mb-3.5 text-[11px] font-semibold uppercase tracking-widest text-[#8a837a] dark:text-[#6e6760]">Related searches</h4>
+  <div data-related class="flex flex-wrap gap-2">
+    {items.map((item) => <a href={targetFor(item)} class="rounded-full border-[1.5px] border-black/[0.09] bg-white/50 px-3.5 py-1.5 font-dm text-[13px] text-[#4a4540] transition-all duration-150 hover:border-[var(--accent)] hover:text-[var(--accent)] dark:border-white/[0.08] dark:bg-[#1e1c18]/50 dark:text-[#b8b0a5]">{item}</a>)}
+  </div>
+</div>
