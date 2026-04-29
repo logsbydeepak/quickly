@@ -31,9 +31,9 @@ def hello_world():
             SUM(w.frequency) AS keyword_score,
             COUNT(pl.from_url) AS backlinks,
             SUM(w.frequency) + COUNT(pl.from_url) AS total_score
-        FROM word_index w
-        JOIN page p ON p.id = w.page_id
-        LEFT JOIN page_link pl ON pl.to_url = p.url
+        FROM quickly_word_index w
+        JOIN quickly_page p ON p.id = w.page_id
+        LEFT JOIN quickly_page_link pl ON pl.to_url = p.url
         WHERE w.word = ANY(%s)
         GROUP BY p.id, p.url, p.title
         ORDER BY total_score DESC

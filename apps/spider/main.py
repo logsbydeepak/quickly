@@ -1,9 +1,9 @@
 import utils
-import db
+import db_utils
 
 
 def spider(url):
-    db_page = db.retrieve_page(url)
+    db_page = db_utils.retrieve_page(url)
 
     if db_page:
         print(f"Found cached page for {url}")
@@ -17,7 +17,7 @@ def spider(url):
     p = utils.urlparse(url)
     robots_url = f"{p.scheme}://{p.netloc}/robots.txt"
 
-    db_res = db.retrieve_robot(robots_url)
+    db_res = db_utils.retrieve_robot(robots_url)
     if db_res:
         print(f"Found cached robots.txt for {url}")
         robots_txt = db_res
@@ -25,7 +25,7 @@ def spider(url):
         print(f"Fetching robots.txt for {url}")
         robots_txt = utils.fetch(robots_url)
         if robots_txt:
-            db.store_robot(robots_url, robots_txt)
+            db_utils.store_robot(robots_url, robots_txt)
 
     if robots_txt is None:
         print(f"Could not fetch robots.txt for {url}")
@@ -45,11 +45,11 @@ def spider(url):
     body = utils.get_body(soup)
     links = utils.extract_links(soup, url)
 
-    page = db.Page(url=url, title=title, description=description, content=body)
-    db.store_page(page)
+    page = db_utils.Page(url=url, title=title, description=description, content=body)
+    db_utils.store_page(page)
 
     for link in links:
-        db.store_page_link(url, link)
+        db_utils.store_page_link(url, link)
 
     print(f"Title: {title}")
     print(f"Description: {description}")
@@ -58,6 +58,7 @@ def spider(url):
 
 def main():
     spider("https://pypi.org/project/beautifulsoup4/")
+    spider("https://en.wikipedia.org/wiki/JavaScript")
 
 
 if __name__ == "__main__":

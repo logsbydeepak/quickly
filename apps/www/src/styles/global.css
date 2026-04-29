@@ -23,7 +23,9 @@
   --accent-glow: oklch(0.7 0.2 32 / 0.3);
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -49,19 +51,45 @@ body {
   background: rgb(255 255 255 / 0.1);
 }
 
-.delay-1 { animation-delay: 0.08s; }
-.delay-2 { animation-delay: 0.16s; }
-.delay-3 { animation-delay: 0.24s; }
-.r0 { animation-delay: 0s; }
-.r1 { animation-delay: 0.05s; }
-.r2 { animation-delay: 0.1s; }
-.r3 { animation-delay: 0.15s; }
-.r4 { animation-delay: 0.2s; }
-.r5 { animation-delay: 0.25s; }
-.r6 { animation-delay: 0.3s; }
-.r7 { animation-delay: 0.35s; }
-.d300 { animation-delay: 0.3s; }
-.d400 { animation-delay: 0.4s; }
+.delay-1 {
+  animation-delay: 0.08s;
+}
+.delay-2 {
+  animation-delay: 0.16s;
+}
+.delay-3 {
+  animation-delay: 0.24s;
+}
+.r0 {
+  animation-delay: 0s;
+}
+.r1 {
+  animation-delay: 0.05s;
+}
+.r2 {
+  animation-delay: 0.1s;
+}
+.r3 {
+  animation-delay: 0.15s;
+}
+.r4 {
+  animation-delay: 0.2s;
+}
+.r5 {
+  animation-delay: 0.25s;
+}
+.r6 {
+  animation-delay: 0.3s;
+}
+.r7 {
+  animation-delay: 0.35s;
+}
+.d300 {
+  animation-delay: 0.3s;
+}
+.d400 {
+  animation-delay: 0.4s;
+}
 
 .shimmer-bg {
   background: linear-gradient(90deg, #e2ddd7 25%, #d4cec8 50%, #e2ddd7 75%);
@@ -74,21 +102,41 @@ body {
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes resultSlide {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -600px 0; }
-  100% { background-position: 600px 0; }
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
 }
