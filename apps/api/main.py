@@ -1,19 +1,14 @@
 from flask import Flask, request, jsonify, g
-import os
+from psycopg.rows import dict_row
+from db import close_db, get_db
 import tkz
-import psycopg
 
 app = Flask(__name__)
 
-DB_URL = os.getenv("DB_URL")
-if not DB_URL:
-    raise Exception("Missing DB_URL")
 
-
-def get_db():
-    if "db" not in g:
-        g.db = psycopg.connect(DB_URL)
-    return g.db
+@app.teardown_appcontext
+def teardown_db(exception):
+    close_db(g)
 
 
 @app.get("/search")
@@ -25,7 +20,7 @@ def hello_world():
 
     words = tkz.tokenize(query)
 
-    db = get_db()
+    db = get_db(g, row_factory=dict_row)
 
     rows = db.execute(
         """

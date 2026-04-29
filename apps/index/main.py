@@ -1,20 +1,6 @@
 from collections import Counter
-import psycopg
+from db import get_db
 import tkz
-
-db = None
-DB_URL = None
-
-if not DB_URL:
-    raise ValueError("DB_URL environment variable is not set")
-
-
-def get_db():
-    global db
-    if db is None:
-        db = psycopg.connect(DB_URL)
-    return db
-
 
 insert_query = """
 INSERT INTO word_index(word, page_id, frequency)
