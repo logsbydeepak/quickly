@@ -1,35 +1,24 @@
-# Quickly Indexer
+# Indexer
 
-The indexer converts crawled pages into searchable word-frequency rows. It reads pages from `quickly_page`, tokenizes title, description, and content, then writes weighted terms into `quickly_word_index`.
+Tokenizes crawled pages and writes weighted terms to `quickly_word_index`.
 
-## Weighting
+## Weights
 
-- Title words add `5` points each.
-- Description words add `3` points each.
-- Body content words add `1` point each.
+- Title: 5 per word
+- Description: 3 per word
+- Body: 1 per word
 
-The API later combines these keyword frequencies with backlink counts to rank results.
-
-## Running
-
-Set `DB_URL` first:
+## Run
 
 ```sh
-export DB_URL="postgresql://user:password@localhost:5432/quickly"
-```
-
-Index all pages that do not already have word-index rows:
-
-```sh
+export DB_URL="postgresql://user:pass@localhost:5432/quickly"
 make index_all
 ```
 
-Or call the module directly:
+Or directly:
 
 ```sh
 uv run python -c "import main; main.index_all_pages()"
 ```
 
-## Notes
-
-`index_all_pages` works in batches and skips pages that already exist in `quickly_word_index`. If page content changes and needs to be indexed again, clear the relevant rows from `quickly_word_index` before rerunning.
+Pages already present in `quickly_word_index` are skipped. To re-index a page, delete its rows first.

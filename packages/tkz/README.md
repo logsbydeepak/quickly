@@ -1,28 +1,18 @@
-# Quickly Tokenizer
+# tkz
 
-`tkz` is the shared tokenizer used by the indexer and API.
-
-## Behavior
-
-`tokenize(text)`:
-
-- Lowercases the input.
-- Extracts alphanumeric words with a regular expression.
-- Removes English stop words from NLTK.
-- Returns an empty list for empty input.
-
-NLTK stop words are read from `/tmp/nltk_data`. If they are missing, the package downloads them there on first use.
-
-## Example
+Shared tokenizer used by the indexer and API.
 
 ```python
 import tkz
-
-tokens = tkz.tokenize("Search the web, fast.")
-print(tokens)
+tkz.tokenize("Search the web, fast.")
+# -> ["search", "web", "fast"]
 ```
 
-## Used By
+`tokenize(text)` lowercases input, extracts alphanumeric words, and drops English NLTK stop words. Returns `[]` for empty input.
 
-- `apps/index` to create `quickly_word_index` rows from crawled page content.
-- `apps/api` to tokenize incoming search queries before looking up indexed pages.
+NLTK stop words are cached in `/tmp/nltk_data` and downloaded on first use.
+
+## Used by
+
+- `apps/index` — building `quickly_word_index` rows.
+- `apps/api` — tokenizing incoming queries.

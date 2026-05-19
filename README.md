@@ -1,117 +1,94 @@
 # Quickly
 
-Quickly is a small search engine workspace. It crawls pages, stores page metadata and links, builds a token index, exposes search results through a Flask API, and renders a fast Astro web UI.
+A small search engine. Crawl pages, index tokens, serve results.
 
-![Quickly search UI screenshot](screenshot.png)
+![screenshot](screenshot.png)
 
-## Workspace
+## Architecture
+
+```text
+                  ┌─────────────┐
+                  │   Web (UI)  │   apps/www  (Astro)
+                  └──────┬──────┘
+                         │ HTTP  (PUBLIC_API_URL)
+                         ▼
+                  ┌─────────────┐
+                  │  Search API │   apps/api  (Flask)
+                  └──────┬──────┘
+                         │ SQL
+                         ▼
+                  ┌─────────────┐
+                  │ PostgreSQL  │   packages/db  (schema + conn)
+                  └──────▲──────┘
+                         │ writes
+        ┌────────────────┼────────────────┐
+        │                                 │
+ ┌──────┴──────┐                   ┌──────┴──────┐
+ │   Spider    │  crawls web  ───▶ │   Indexer   │  tokenizes pages
+ │ apps/spider │                   │ apps/index  │
+ └─────────────┘                   └──────┬──────┘
+                                          │ uses
+                                          ▼
+                                   ┌─────────────┐
+                                   │  Tokenizer  │  packages/tkz
+                                   └─────────────┘
+```
+
+## Layout
 
 ```text
 apps/
-  api/      Flask JSON API for `/search`
-  index/    Batch indexer that turns stored pages into searchable words
-  spider/   Crawler that discovers and stores pages
-  www/      Astro frontend for the home and results pages
+  api/      Flask /search API
+  index/    Token indexer
+  spider/   Crawler
+  www/      Astro frontend
+  html/     Static HTML prototype
 packages/
-  db/       Shared PostgreSQL connection helpers and schema
-  tkz/      Tokenizer used by the API and indexer
+  db/       Postgres helpers + schema
+  tkz/      Tokenizer
 ```
 
 ## Requirements
 
-- Python 3.12+
-- uv
-- Bun
-- Node.js 22.12+
-- PostgreSQL database available through `DB_URL`
-
-## Environment
-
-Set `DB_URL` before running the Python services:
-
-```sh
-export DB_URL="postgresql://user:password@localhost:5432/quickly"
-```
-
-The web app reads the API location from `PUBLIC_API_URL`. If it is not set, the pages default to a local API:
-
-```sh
-export PUBLIC_API_URL="http://127.0.0.1:5000"
-```
+Python 3.12+, uv, Bun, Node 22.12+, PostgreSQL.
 
 ## Setup
 
-Install Python workspace dependencies:
-
 ```sh
+export DB_URL="postgresql://user:pass@localhost:5432/quickly"
 uv sync
+cd packages/db && make init_db
+cd apps/www && bun install
 ```
 
-Install frontend dependencies:
+## Run
 
 ```sh
-cd apps/www
-bun install
+make api                       # API on :5000
+cd apps/www && bun run dev     # Frontend
 ```
 
-Initialize the database tables:
+## Build search data
 
 ```sh
-cd packages/db
-make init_db
+cd apps/spider && uv run python main.py https://example.com
+cd apps/index && make index_all
 ```
 
-## Run The Stack
-
-Start the API from the repository root:
+## Useful commands
 
 ```sh
-make api
-```
-
-Start the frontend:
-
-```sh
-cd apps/www
-bun run dev
-```
-
-Then open the Astro dev URL and search from the home page.
-
-## Build Search Data
-
-Use the crawler to store pages:
-
-```sh
-cd apps/spider
-uv run python main.py "https://example.com" --max-pages 25 --max-depth 2
-```
-
-Build the word index after pages have been crawled:
-
-```sh
-cd apps/index
-make index_all
-```
-
-Search results are ranked from token frequency and backlink count in `apps/api/main.py`.
-
-## Useful Commands
-
-```sh
-make format        # format Python and frontend files
-make api           # run the Flask API
+make format                    # format Python + frontend
 cd apps/www && bun run build
-cd apps/www && bun run preview
 cd packages/db && make drop_db
 ```
 
-## Documentation
+## Docs
 
-- [Frontend app](apps/www/README.md)
-- [Frontend pages](apps/www/src/pages/README.md)
-- [Search API](apps/api/README.md)
-- [Crawler](apps/spider/README.md)
+- [API](apps/api/README.md)
 - [Indexer](apps/index/README.md)
-- [Database package](packages/db/README.md)
-- [Tokenizer package](packages/tkz/README.md)
+- [Spider](apps/spider/README.md)
+- [Web](apps/www/README.md)
+- [HTML prototype](apps/html/README.md)
+- [db package](packages/db/README.md)
+- [tkz package](packages/tkz/README.md)
