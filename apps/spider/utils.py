@@ -19,12 +19,6 @@ def fetch(url):
         return None
 
 
-def fetch_robots_txt(url):
-    p = urlparse(url)
-    robots_url = f"{p.scheme}://{p.netloc}/robots.txt"
-    return fetch(robots_url)
-
-
 def check_is_allowed(robots_text, url):
     rp = RobotFileParser()
     rp.parse(robots_text.splitlines())
@@ -35,33 +29,26 @@ def check_is_allowed(robots_text, url):
 def crawl(url):
     html = fetch(url)
     if html is None:
-        return []
+        return None
 
     soup = BeautifulSoup(html, "html.parser")
     return soup
 
 
+def _clean(text):
+    return text.replace("\x00", "") if text else text
+
+
 def get_title(soup):
-    title = soup.title.string
+    title = soup.title.string if soup.title else None
+    title = _clean(title)
     return title if title and len(title.strip()) > 0 else None
-
-
-def get_links(soup, base_url):
-    links = []
-    for a_tag in soup.find_all("a", href=True):
-        href = a_tag["href"]
-        if href.startswith("/"):
-            href = base_url + href
-        elif not href.startswith("http"):
-            continue
-        links.append(href)
-    return links
 
 
 def get_description(soup):
     description_tag = soup.find("meta", attrs={"name": "description"})
     if description_tag and "content" in description_tag.attrs:
-        return description_tag["content"].strip()
+        return _clean(description_tag["content"].strip())
     return None
 
 
@@ -74,7 +61,7 @@ def get_body(soup):
     text = body.get_text(separator=" ", strip=True)
     text = re.sub(r"\s+", " ", text)
 
-    return text
+    return _clean(text)
 
 
 def extract_links(soup, base_url):
@@ -87,7 +74,7 @@ def extract_links(soup, base_url):
             continue
 
         full_url = urljoin(base_url, href)
-        full_url, _ = urldefrag(full_url)  # remove #fragment
+        full_url, _ = urldefrag(full_url)
 
         if full_url.startswith(("http://", "https://")):
             links.add(full_url)

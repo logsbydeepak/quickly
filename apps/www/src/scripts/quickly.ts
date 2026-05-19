@@ -13,7 +13,9 @@ function applyTheme(theme: Theme) {
 
 function initTheme() {
   const saved = localStorage.getItem(STORAGE_KEY);
-  const preferred: Theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  const preferred: Theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
   applyTheme(saved === "dark" || saved === "light" ? saved : preferred);
   document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((button) => {
     button.addEventListener("click", () => {

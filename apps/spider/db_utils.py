@@ -44,7 +44,8 @@ def store_robot(url, content):
     db.execute(
         """
         INSERT INTO quickly_robot (url, content)
-        VALUES (%s, %s);
+        VALUES (%s, %s)
+        ON CONFLICT (url) DO NOTHING;
         """,
         (url, content),
     )
@@ -65,14 +66,30 @@ def retrieve_robot(url):
     return row[0] if row else None
 
 
-def store_page_link(from_url, to_url):
+def store_page_links(from_url, to_urls):
+    if not to_urls:
+        return
+
     db = get_db()
-    db.execute(
-        """
-        INSERT INTO quickly_page_link (from_url, to_url)
-        VALUES (%s, %s)
-        ON CONFLICT DO NOTHING;
-        """,
-        (from_url, to_url),
-    )
+    with db.cursor() as cur:
+        cur.executemany(
+            """
+            INSERT INTO quickly_page_link (from_url, to_url)
+            VALUES (%s, %s)
+            ON CONFLICT DO NOTHING;
+            """,
+            [(from_url, to_url) for to_url in to_urls],
+        )
     db.commit()
+
+
+def get_outgoing_links(from_url):
+    db = get_db()
+    result = db.execute(
+        """
+        SELECT to_url FROM quickly_page_link
+        WHERE from_url = %s;
+        """,
+        (from_url,),
+    )
+    return [row[0] for row in result.fetchall()]

@@ -27,7 +27,8 @@ Response shape:
       "url": "https://example.com",
       "title": "Example",
       "description": "Short summary",
-      "score": 12
+      "score": 12,
+      "exact_match": false
     }
   ],
   "meta": {
@@ -49,10 +50,22 @@ Response shape:
 
 The API tokenizes the query with `tkz`, finds matching rows in `quickly_word_index`, joins page metadata from `quickly_page`, counts backlinks from `quickly_page_link`, and sorts by:
 
-1. Total score
-2. Keyword score
-3. Backlink count
-4. Title
+1. Exact URL match (see below)
+2. Number of distinct query words found in the page **title**
+3. Number of distinct query words found in the page **description**
+4. Number of distinct query words matched anywhere (title, description, or body)
+5. Keyword score (sum of term frequencies, with title/description already weighted higher at index time)
+6. Backlink count
+7. Title
+
+## Exact URL match
+
+When the query looks like a domain or URL (e.g. `google.com`, `www.google.com`,
+`https://google.com/path`), the API also checks `quickly_page.url` against a set
+of normalised candidates: with and without `www.`, `http` and `https`, and with
+or without a trailing slash. Any page whose URL matches a candidate is pinned to
+the top of the results and tagged with `"exact_match": true`. The exact match is
+returned even if the page does not appear in the word index.
 
 ## Development
 

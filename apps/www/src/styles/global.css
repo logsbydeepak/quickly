@@ -62,7 +62,6 @@ html:not(.dark) [data-theme-moon],
 }
 
 [data-theme-label] {
-  display: grid;
   min-width: 29px;
 }
 

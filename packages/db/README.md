@@ -38,3 +38,12 @@ make drop_db
 ```
 
 Both commands run through `main.py`, which executes the SQL in `schema.py`.
+
+Sync data from one database to another:
+
+```sh
+uv run python sync.py "postgresql://local-url" "postgresql://supabase-url"
+```
+
+The sync script creates missing tables on the target, clears the target tables,
+then copies the `quickly_*` rows from the source URL.

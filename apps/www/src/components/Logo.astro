@@ -7,6 +7,7 @@ const sizes = {
 };
 const cfg = sizes[size] ?? sizes.lg;
 const stroke = cfg.logo * 0.072;
+const wordmarkVisibility = size === "sm" ? "hidden sm:inline" : "";
 ---
 
 <div class={`flex items-center ${cfg.gap} select-none`}>
@@ -15,5 +16,5 @@ const stroke = cfg.logo * 0.072;
     <line x1="30.2" y1="30.2" x2="39" y2="39" stroke="var(--accent)" stroke-width={stroke} stroke-linecap="round"></line>
     <polyline points="23,11 18,22 22.5,22 19,31 26,20 21.5,20 23,11" stroke="var(--accent)" stroke-width={stroke * 0.85} stroke-linejoin="round" stroke-linecap="round" fill="none"></polyline>
   </svg>
-  <span class={`font-sora ${cfg.text} font-bold leading-none tracking-normal text-[#141210] dark:text-[#f0ede8]`}>quickly</span>
+  <span class={`font-sora ${cfg.text} font-bold leading-none tracking-normal text-[#141210] dark:text-[#f0ede8] ${wordmarkVisibility}`}>quickly</span>
 </div>

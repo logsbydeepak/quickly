@@ -1,64 +1,85 @@
+from collections import deque
+import sys
+import time
+
 import utils
 import db_utils
 
 
-def spider(url):
-    db_page = db_utils.retrieve_page(url)
-
-    if db_page:
-        print(f"Found cached page for {url}")
-        print(f"Title: {db_page.title}")
-        print(f"Description: {db_page.description}")
-        print(f"Body: {db_page.content}")
-        return
-
-    robots_txt = None
-
+def crawl_one(url):
+    """Fetch a fresh URL and store it. Returns (links, None) or (None, reason)."""
     p = utils.urlparse(url)
     robots_url = f"{p.scheme}://{p.netloc}/robots.txt"
 
-    db_res = db_utils.retrieve_robot(robots_url)
-    if db_res:
-        print(f"Found cached robots.txt for {url}")
-        robots_txt = db_res
-    else:
-        print(f"Fetching robots.txt for {url}")
+    robots_txt = db_utils.retrieve_robot(robots_url)
+    if robots_txt is None:
         robots_txt = utils.fetch(robots_url)
-        if robots_txt:
+        if robots_txt is not None:
             db_utils.store_robot(robots_url, robots_txt)
 
     if robots_txt is None:
-        print(f"Could not fetch robots.txt for {url}")
-        return
+        return None, "no robots.txt"
 
     if not utils.check_is_allowed(robots_txt, url):
-        print(f"Access to {url} is disallowed by robots.txt")
-        return
+        return None, "disallowed by robots.txt"
 
     soup = utils.crawl(url)
     if soup is None:
-        print(f"Failed to crawl {url}")
-        return
+        return None, "fetch failed"
 
     title = utils.get_title(soup)
+    if title is None:
+        return None, "no title"
+
     description = utils.get_description(soup)
     body = utils.get_body(soup)
     links = utils.extract_links(soup, url)
 
     page = db_utils.Page(url=url, title=title, description=description, content=body)
     db_utils.store_page(page)
+    db_utils.store_page_links(url, links)
 
-    for link in links:
-        db_utils.store_page_link(url, link)
+    return links, None
 
-    print(f"Title: {title}")
-    print(f"Description: {description}")
-    print(f"Body: {body}")
+
+def crawl(seeds, max_pages=50, delay=1.0):
+    """BFS crawl from seed URLs, capped at max_pages newly fetched pages."""
+    frontier = deque(seeds)
+    visited = set()
+    fetched = 0
+
+    while frontier and fetched < max_pages:
+        url = frontier.popleft()
+        if url in visited:
+            continue
+        visited.add(url)
+
+        if db_utils.retrieve_page(url):
+            links = db_utils.get_outgoing_links(url)
+            print(f"        cache  {url} ({len(links)} links)")
+        else:
+            links, reason = crawl_one(url)
+            if links is None:
+                print(f"        skip   {url} ({reason})")
+                continue
+            fetched += 1
+            print(f"[{fetched}/{max_pages}] fetch  {url} ({len(links)} links)")
+            time.sleep(delay)
+
+        for link in links:
+            if link not in visited:
+                frontier.append(link)
+
+    print(f"\nDone. Fetched {fetched} new pages, visited {len(visited)} URLs.")
 
 
 def main():
-    spider("https://pypi.org/project/beautifulsoup4/")
-    spider("https://en.wikipedia.org/wiki/JavaScript")
+    if len(sys.argv) < 2:
+        print("Usage: python main.py <url> [url ...]")
+        sys.exit(1)
+    for seed in sys.argv[1:]:
+        print(f"\n=== Crawl from {seed} ===")
+        crawl([seed], max_pages=50, delay=1.0)
 
 
 if __name__ == "__main__":

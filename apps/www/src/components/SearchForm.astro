@@ -7,22 +7,22 @@ interface Props {
 }
 
 const { query = "", compact = false, showActions = false, autofocus = false } = Astro.props;
-const shellHeight = compact ? "h-11 rounded-[22px] px-4" : "h-14 rounded-[28px] px-5";
+const shellHeight = compact ? "h-10 rounded-[20px] px-3 sm:h-11 sm:rounded-[22px] sm:px-4" : "h-14 rounded-[28px] px-5";
 const inputSize = compact ? "text-sm" : "text-[17px]";
-const submitSize = compact ? "h-7 w-7" : "h-9 w-9";
+const buttonSize = compact ? "h-7 w-7 sm:h-8 sm:w-8" : "h-9 w-9";
 const iconSize = compact ? 13 : 16;
 const searchIconSize = compact ? 16 : 20;
 const suggestionsRadius = compact ? "rounded-b-[16px]" : "rounded-b-[20px]";
 ---
 
-<form data-search-form class={compact ? "max-w-[600px] flex-1" : "w-full max-w-[600px] animate-fade-up delay-1"}>
+<form data-search-form class={compact ? "min-w-0 max-w-[600px] flex-1" : "w-full max-w-[600px] animate-fade-up delay-1"}>
   <div data-search-shell class="relative w-full">
-    <div class={`flex ${shellHeight} items-center gap-2.5 border-[1.5px] border-black/[0.09] bg-white/70 shadow-sm backdrop-blur-md transition-all duration-150 focus-within:border-[var(--accent)] focus-within:shadow-[0_0_0_3px_var(--accent-glow),0_4px_16px_rgba(0,0,0,0.08)] dark:border-white/[0.08] dark:bg-[#1e1c18]/85`}>
+    <div class={`flex ${shellHeight} items-center gap-2 border-[1.5px] border-black/[0.09] bg-white/70 shadow-sm backdrop-blur-md transition-all duration-150 focus-within:border-[var(--accent)] focus-within:shadow-[0_0_0_3px_var(--accent-glow),0_4px_16px_rgba(0,0,0,0.08)] sm:gap-2.5 dark:border-white/[0.08] dark:bg-[#1e1c18]/85`}>
       <svg width={searchIconSize} height={searchIconSize} viewBox="0 0 20 20" fill="none" class="shrink-0 opacity-40"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>
-      <input data-search-input autofocus={autofocus} type="text" value={query} placeholder="Search the web, fast." class={`flex-1 border-none bg-transparent font-dm ${inputSize} text-[#141210] caret-[var(--accent)] outline-none placeholder:text-[#8a837a] dark:text-[#f0ede8] dark:placeholder:text-[#6e6760]`} />
-      <button data-clear-search type="button" class={`${query ? "" : "hidden"} rounded-full p-1 text-[#8a837a] transition-colors duration-150 hover:text-[#141210] dark:hover:text-[#f0ede8]`}><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button>
+      <input data-search-input autofocus={autofocus} type="text" value={query} placeholder="Search the web, fast." class={`min-w-0 flex-1 border-none bg-transparent font-dm ${inputSize} text-[#141210] caret-[var(--accent)] outline-none placeholder:text-[#8a837a] dark:text-[#f0ede8] dark:placeholder:text-[#6e6760]`} />
+      <button data-clear-search type="button" class={`${query ? "" : "hidden"} flex ${buttonSize} shrink-0 items-center justify-center rounded-full text-[#8a837a] transition-colors duration-150 hover:bg-black/5 hover:text-[#141210] dark:hover:bg-white/5 dark:hover:text-[#f0ede8]`}><svg width={iconSize} height={iconSize} viewBox="0 0 14 14" fill="none"><path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button>
       <div class="h-5 w-px shrink-0 bg-black/10 dark:bg-white/10"></div>
-      <button type="submit" class={`flex ${submitSize} shrink-0 items-center justify-center rounded-full bg-[var(--accent)] transition-all duration-100 hover:opacity-85 active:scale-95`}><svg width={iconSize} height={iconSize} viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="white" stroke-width="1.8"></circle><path d="M10.5 10.5L14 14" stroke="white" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+      <button type="submit" class={`flex ${buttonSize} shrink-0 items-center justify-center rounded-full bg-[var(--accent)] transition-all duration-100 hover:opacity-85 active:scale-95`}><svg width={iconSize} height={iconSize} viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="white" stroke-width="1.8"></circle><path d="M10.5 10.5L14 14" stroke="white" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
     </div>
     <div data-suggestions class={`absolute left-0 right-0 top-full z-50 hidden overflow-hidden ${suggestionsRadius} border-[1.5px] border-t border-[var(--accent)] border-t-black/5 bg-white/95 shadow-lg backdrop-blur-md dark:border-t-white/5 dark:bg-[#1e1c18]/97`}></div>
   </div>
